@@ -10,7 +10,7 @@
     "build-clean": "rm -rf build && mkdir build",
     "build-server": "babel -d ./build ./src -s",
     "build-production": "npm run build-clean && npm run build-server",
-    "start-production": "node ./build/server.js"
+    "start-production": "cross-env NODE_ENV=production node ./build/server.js"
   },
   "repository": {
     "type": "git",

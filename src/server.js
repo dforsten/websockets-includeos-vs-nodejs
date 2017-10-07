@@ -11,10 +11,14 @@ wss.on('connection', (ws) => {
       type: 'move confirmed',
       move: json.move,
     };
-    ws.send(JSON.stringify(reply));
+    try {
+      ws.send(JSON.stringify(reply));
+    } catch (err) {
+      console.log(`Error on sending: ${err.message}`);
+    }
   });
 
-  ws.send('{"something": 1}');
+  // ws.send('{"something": 1}');
 });
 
 const printMetrics = () => {
