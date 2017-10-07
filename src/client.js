@@ -4,25 +4,22 @@ import path from 'path';
 console.log('client started');
 
 const MAX_WORKERS = 5;
-let numWorkers = MAX_WORKERS;
-let sum = 0;
 
-const printMetrics = () => {
-  console.log(`Grand Total: ${sum}`);
-};
+let messagesPerSecond = 0;
+
+setInterval(() => {
+  console.log(`Roundtrips per second: ${messagesPerSecond}`);
+  messagesPerSecond = 0;
+}, 1000);
 
 const handleMessage = (msg) => {
-  console.log('Message from Worker: ', msg);
-  sum += msg.count;
+  // console.log('Message from Worker: ', msg);
+  messagesPerSecond += msg.roundtrips;
 };
 
 const handleWorkerExit = (code, signal) => {
   console.log('worker exited with ' +
     `code ${code} and signal ${signal}`);
-  numWorkers -= 1;
-  if (!numWorkers) {
-    printMetrics();
-  }
 };
 
 for (let i = 0; i < MAX_WORKERS; ++i) {
