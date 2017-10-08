@@ -14,13 +14,11 @@ const server = process.argv[2];
 const timestampToJSON = () => JSON.stringify({ timestamp: Date.now() });
 
 const handleMessage = (ws, msg) => {
-  // console.log(msg);
   const json = JSON.parse(msg);
   const elapsedTime = Date.now() - json.timestamp;
-  // console.log(elapsedTime);
   totalElapsedTimes += elapsedTime;
-  // Increment counter
   fullRoundtrips += 1;
+
   // Trigger next roundtrip      
   ws.send(timestampToJSON());
 };
@@ -34,7 +32,6 @@ const connectBatch = () => {
     });
 
     ws.on('open', () => {
-      // console.log('Connected to ws server!');
       ws.send(timestampToJSON());
     });
 
@@ -50,10 +47,6 @@ const connectBatch = () => {
 };
 
 connectBatch();
-
-// process.on('message', (msg) => {
-//   console.log('Message from Controller:', msg);
-// });
 
 setInterval(() => {
   process.send({

@@ -41,7 +41,3 @@ for (let i = 0; i < MAX_WORKERS; ++i) {
   worker.on('message', handleMessage);
   worker.on('exit', handleWorkerExit);
 }
-
-// worker.send({ hello: 'world' });
-
-console.log('client.js ended!');
