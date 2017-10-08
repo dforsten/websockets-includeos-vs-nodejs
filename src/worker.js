@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 
-const MAX_CONNECTIONS = 2000;
+const MAX_CONNECTIONS = 5000;
 const BATCH_SIZE = 3;
 const BATCH_DELAY = 200;
 const REPORT_DELAY = 200;
