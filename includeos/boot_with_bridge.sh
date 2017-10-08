@@ -1,1 +1,1 @@
-boot --create-bridge .
+boot --create-bridge  -v . "-m 1024"
