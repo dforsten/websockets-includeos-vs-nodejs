@@ -13,15 +13,22 @@ console.log(`benchmarking server ${server}`);
 const MAX_WORKERS = 5;
 
 let messagesPerSecond = 0;
+let numAverageLatencies = 0;
+let averageLatency = 0;
 
 setInterval(() => {
-  console.log(`Roundtrips per second: ${messagesPerSecond}`);
+  averageLatency /= numAverageLatencies;
+  console.log(`Roundtrips per second: ${messagesPerSecond}, at average latency: ${averageLatency}ms`);
   messagesPerSecond = 0;
+  numAverageLatencies = 0;
+  averageLatency = 0;
 }, 1000);
 
 const handleMessage = (msg) => {
   // console.log('Message from Worker: ', msg);
   messagesPerSecond += msg.roundtrips;
+  numAverageLatencies += 1;
+  averageLatency += msg.averageLatency;
 };
 
 const handleWorkerExit = (code, signal) => {
