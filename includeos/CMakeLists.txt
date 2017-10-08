@@ -19,6 +19,9 @@ set(SOURCES
   service.cpp # ...add more here
   )
 
+set(MAX_MEM 1024)
+set(MEM "-m 1024")
+
 #
 # Service CMake options
 # (uncomment to enable)
