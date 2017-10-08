@@ -8,6 +8,8 @@ const REPORT_DELAY = 200;
 let curConnected = 0;
 let fullRoundtrips = 0;
 
+const server = process.argv[2];
+
 const timestampToJSON = () => JSON.stringify({ timestamp: Date.now() });
 
 const handleMessage = (ws) => {
@@ -19,7 +21,7 @@ const handleMessage = (ws) => {
 
 const connectBatch = () => {
   for (let i = 0; i < BATCH_SIZE; ++i) {
-    const ws = new WebSocket('ws://localhost:8080');
+    const ws = new WebSocket(`ws://${server}`);
 
     ws.onerror = ((err) => {
       console.log(`Connection error: ${err.message}`);
