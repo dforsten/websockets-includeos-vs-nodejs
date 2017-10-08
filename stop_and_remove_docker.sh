@@ -1,0 +1,2 @@
+docker stop websockets_benchmark
+docker rm websockets_benchmark
