@@ -16,36 +16,38 @@
 // limitations under the License.
 
 #include <net/inet4>
+#include <net/ws/websocket.hpp>
 #include <service>
 
-#include <net/ws/websocket.hpp>
+static std::map<int, net::WebSocket_ptr> websockets;
+static int idx = 0;
+
+void print_num_clients()
+{
+  printf("Number of connected clients: %lu\n", websockets.size());
+}
+
 void handle_ws(net::WebSocket_ptr ws)
 {
-  static std::map<int, net::WebSocket_ptr> websockets;
-  static int idx = 0;
-
   // nullptr means the WS attempt failed
   if(not ws) {
     printf("WS failed\n");
     return;
   }
-  printf("WS Connected: %s\n", ws->to_string().c_str());
+  //printf("WS Connected: %s\n", ws->to_string().c_str());
 
-  // Write a welcome message
-  ws->write("Welcome");
-  ws->write(ws->to_string());
   // Setup echo reply
   ws->on_read = [ws = ws.get()](auto msg) {
     auto str = msg->as_text();
-    printf("WS Recv: %s\n", str.c_str());
+    //printf("WS Recv: %s\n", str.c_str());
     ws->write(str);
   };
 
   websockets[idx] = std::move(ws);
   // Notify on close
-  websockets[idx]->on_close = [key = idx](auto code) {
-    printf("WS Closing (%u) %s\n", code, websockets[key]->to_string().c_str());
-  };
+//  websockets[idx]->on_close = [key = idx](auto code) {
+//    printf("WS Closing (%u) %s\n", code, websockets[key]->to_string().c_str());
+//  };
   idx++;
 }
 
@@ -94,4 +96,9 @@ void Service::start()
 
   // Start listening on port 80
   server->listen(80);
+
+  Timers::periodic(1s, 1s,
+    [&inet] (uint32_t) {
+      print_num_clients();
+    });    
 }
