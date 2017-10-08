@@ -29,9 +29,6 @@ set(SOURCES
 # To add your own include paths:
 # set(LOCAL_INCLUDES ".")
 
-# Adding memdisk (expects my.disk to exist in current dir):
-# set(MEMDISK ${CMAKE_SOURCE_DIR}/my.disk)
-
 # DRIVERS / PLUGINS:
 
 if ("$ENV{PLATFORM}" STREQUAL "x86_solo5")
@@ -50,5 +47,3 @@ set(PLUGINS
 
 # include service build script
 include($ENV{INCLUDEOS_PREFIX}/includeos/post.service.cmake)
-
-diskbuilder(disk)

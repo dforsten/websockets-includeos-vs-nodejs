@@ -52,7 +52,6 @@ void handle_ws(net::WebSocket_ptr ws)
 }
 
 #include <net/http/server.hpp>
-#include <memdisk>
 std::unique_ptr<http::Server> server;
 
 void Service::start()
@@ -61,31 +60,17 @@ void Service::start()
   auto& inet = net::Inet4::stack<0>();
   Expects(inet.is_configured());
 
-  // Init the memdisk
-  auto& disk = fs::memdisk();
-  disk.init_fs([] (auto err, auto&) {
-    Expects(not err);
-  });
-  // Retreive the HTML page from the disk
-  auto file = disk.fs().read_file("/index.html");
-  Expects(file.is_valid());
-  Chunk html{file.data(), file.size()};
-
   // Create a HTTP Server and setup request handling
   server = std::make_unique<http::Server>(inet.tcp());
-  server->on_request([html] (auto req, auto rw)
+  server->on_request([] (auto req, auto rw)
   {
     // We only support get
     if(req->method() != http::GET) {
       rw->write_header(http::Not_Found);
       return;
     }
-    // Serve HTML on /
-    if(req->uri() == "/") {
-      rw->write(html);
-    }
     // WebSockets go here
-    else if(req->uri() == "/ws") {
+    if(req->uri() == "/") {
       auto ws = net::WebSocket::upgrade(*req, *rw);
       handle_ws(std::move(ws));
     }
