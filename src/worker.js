@@ -8,6 +8,8 @@ const REPORT_DELAY = 200;
 let curConnected = 0;
 let fullRoundtrips = 0;
 
+const timestampToJSON = () => JSON.stringify({ timestamp: Date.now() });
+
 const handleMessage = (ws) => {
   // Increment counter
   fullRoundtrips += 1;
@@ -25,7 +27,7 @@ const connectBatch = () => {
 
     ws.on('open', () => {
       // console.log('Connected to ws server!');
-      ws.send('{"type": "initial state"}');
+      ws.send(timestampToJSON());
     });
 
     ws.on('message', () => {
