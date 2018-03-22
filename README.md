@@ -1,4 +1,4 @@
-Follow-up to the Qt/C++ User Group Graz [C++ Coding Dojo](https://www.meetup.com/preview/Graz-Qt-C-11-Meetup/events/240890363) on writing multiplayer game APIs using Websockets and [IncludeOS](https://github.com/hioa-cs/IncludeOS).
+Follow-up to the Qt/C++ User Group Graz [C++ Coding Dojo](https://www.meetup.com/de-DE/Graz-Qt-C-11-Meetup/events/240890363/) on writing multiplayer game APIs using Websockets and [IncludeOS](https://github.com/hioa-cs/IncludeOS).
 
 # tl;dr
 
