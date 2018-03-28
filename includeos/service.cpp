@@ -15,12 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <net/http/server.hpp>
 #include <net/inet4>
 #include <net/ws/websocket.hpp>
 #include <service>
 
-static std::map<int, net::WebSocket_ptr> websockets;
-static int idx = 0;
+using WebSocket_pool_index = int;
+using WebSocket_pool = std::map<WebSocket_pool_index, net::WebSocket_ptr>;
+
+static http::Server_ptr server;
+
+static WebSocket_pool_index idx;
+static WebSocket_pool websockets;
 
 void print_num_clients()
 {
@@ -29,9 +35,9 @@ void print_num_clients()
 
 void handle_ws(net::WebSocket_ptr ws)
 {
-  // nullptr means the WS attempt failed
+  // nullptr means the WebSocket attempt failed
   if(not ws) {
-    printf("WS failed\n");
+    printf("WebSocket connection failed\n");
     return;
   }
   //printf("WS Connected: %s\n", ws->to_string().c_str());
@@ -51,9 +57,6 @@ void handle_ws(net::WebSocket_ptr ws)
   idx++;
 }
 
-#include <net/http/server.hpp>
-std::unique_ptr<http::Server> server;
-
 void Service::start()
 {
   // Retreive the stack (configured from outside)
@@ -61,7 +64,7 @@ void Service::start()
   Expects(inet.is_configured());
 
   // Create a HTTP Server and setup request handling
-  server = std::make_unique<http::Server>(inet.tcp());
+  server = http::make_server(inet.tcp());
   server->on_request([] (auto req, auto rw)
   {
     // We only support get
@@ -69,10 +72,10 @@ void Service::start()
       rw->write_header(http::Not_Found);
       return;
     }
+
     // WebSockets go here
     if(req->uri() == "/") {
-      auto ws = net::WebSocket::upgrade(*req, *rw);
-      handle_ws(std::move(ws));
+      handle_ws(net::WebSocket::upgrade(*req, *rw));
     }
     else {
       rw->write_header(http::Not_Found);
@@ -82,8 +85,8 @@ void Service::start()
   // Start listening on port 80
   server->listen(80);
 
-  Timers::periodic(1s, 1s,
-    [&inet] (uint32_t) {
-      print_num_clients();
-    });    
+  // Periodically print number of connected clients
+  Timers::periodic(1s, 1s, [](uint32_t){
+    print_num_clients();
+  });
 }
